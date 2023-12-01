@@ -12,3 +12,5 @@ My previous AoC repositories: [2015](https://github.com/mimikrija/AdventOfCode20
 
 Puzzle | Solution(s) | Remarks |
 ---    |---    |----
+[Day 1: Trebuchet?!](https://adventofcode.com/2023/day/1) | [Python](python/01.py) | Search for the first occurence of a reversed word starting from the end of the line to avoid the overlapping issue in words such as "oneight". |
+

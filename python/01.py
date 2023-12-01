@@ -2,15 +2,15 @@ from santas_little_helpers.helpers import *
 import re
 
 input_data = read_input(1)
+
+
 party_1 = sum(int((digits:=re.findall(r'\d', line))[0]+digits[-1]) for line in input_data)
 
-party_2 = 0
 
-words = ['\d', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine']
-words_reversed = ['\d']+[word[::-1] for word in words[1:]]
+words = ['\\d', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine']
+words_reversed = ['\\d']+[word[::-1] for word in words[1:]]
 
-forward = re.compile('|'.join(c for c in words))
-backward = re.compile('|'.join(c for c in words_reversed))
+forward, backward = (re.compile('|'.join(c for c in w)) for w in (words, words_reversed))
 
 first_digit = lambda x: re.search(forward, x)[0]
 last_digit = lambda x: re.search(backward, x[::-1])[0]

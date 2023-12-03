@@ -14,3 +14,4 @@ Puzzle | Solution(s) | Remarks |
 ---    |---    |----
 [Day 1: Trebuchet?!](https://adventofcode.com/2023/day/1) | [Python](python/01.py) | Search for the first occurence of a reversed word starting from the end of the line to avoid the overlapping issue in words such as "oneight". |
 [Day 2: Cube Conundrum](https://adventofcode.com/2023/day/2) | [Python](python/02.py) | The most difficult part is parsing - I used regex again (some say it is overkill but I kinda like it here). In first part, a game is disqualified if any of the cube quantities (in any of the sets) is greater than a specified value per cube color. In the second part we need to find per color maximums.
+[Day 3: Gear Ratios](https://adventofcode.com/2023/day/3) | [Python](python/03.py) | `re.finditer` to simultaneously find positions and numbers and then classic set/neighbor operations to solve both parts of the puzzle. I think pt2 could be nicer but it's ok.

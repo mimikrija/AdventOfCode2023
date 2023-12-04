@@ -5,28 +5,20 @@ input_data = read_input(4)
 
 
 party_1 = 0
-scratch_cards = list()
+wins_per_card = list()
 for line in input_data:
-    numbers = line.split(": ")[1]
-    winning, mine = numbers.split(" | ")
-    winning = set(int(w) for w in winning.split())
-    mine = set(int(m) for m in mine.split())
-    winning_count = len(winning & mine)
-    card_score = 0
-    if winning_count:
-        card_score = 2**(winning_count-1)
-        party_1 += card_score
-    scratch_cards.append(winning_count)
+    winning, mine = ({w for w in winning.split()} for winning in line.split(": ")[1].split(" | "))
+    wins_per_card.append((wins:=len(winning & mine)))
+    party_1 += 2**(wins-1) if wins else 0
 
 
-counts = [1 for _ in scratch_cards]
-
-for pos,win_counts in enumerate(scratch_cards, start=1):
+final_counts = [1 for _ in wins_per_card]
+for pos,win_counts in enumerate(wins_per_card, start=1):
     for w in range(win_counts):
-        counts[pos+w] += counts[pos-1]
+        final_counts[pos+w] += final_counts[pos-1]
 
-party_2 = sum(counts)
-        
+party_2 = sum(final_counts)
+
 print_solutions(party_1, party_2)
 
 def test_one():

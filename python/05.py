@@ -8,13 +8,13 @@ input_data = read_input(5, separator='\n\n')
 
 seeds = list(map(int, re.findall(numbers, input_data[0])))
 
-info = {}
+mappings = list()
 
 for chunk in input_data[1:]:
     chunk = chunk.split('\n')
     category = chunk[0][:-1]
     values = [list(map(int, re.findall(numbers, line))) for line in chunk[1:]]
-    info[category] = values
+    mappings.append(values)
 
 
 # destination range | source range | range length
@@ -30,7 +30,7 @@ def get_seed_ranges(seed, mapping):
 
 
 
-for _, mapping in info.items():
+for mapping in mappings:
     new_seeds = [get_seed_ranges(s, mapping) for s in seeds]
     seeds = new_seeds
 

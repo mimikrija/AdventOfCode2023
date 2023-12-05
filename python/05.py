@@ -23,7 +23,7 @@ def get_seed_ranges(seed, mapping):
     for dest, source, length in mapping:
         delta = seed - source
         soil = dest + delta
-        if delta > 0 and dest <= soil < dest + length:
+        if delta >= 0 and dest <= soil < dest + length:
             return soil
     return seed
 

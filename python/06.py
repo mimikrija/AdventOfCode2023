@@ -1,10 +1,12 @@
 from santas_little_helpers.helpers import *
 import re
-from math import prod
+from math import prod, sqrt, ceil
 
 
 def number_of_ways(total_time, record):
-    return sum(speed*total_time - speed**2 > record for speed in range(1, total_time))
+    D = sqrt(total_time**2 - 4*record)
+    solution_left = (total_time - D) / 2
+    return ceil(solution_left + D) - ceil(solution_left)
 
 
 input_data = read_input(6)

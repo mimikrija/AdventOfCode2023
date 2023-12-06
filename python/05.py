@@ -118,7 +118,7 @@ def generate_whatever(our_range, sorted_range):
 for s in seed_ranges:
     new_seeds = [s]
     for sorted_range in sorted_ranges:
-        new_seeds = [c for new_seed in new_seeds for c in generate_whatever(new_seed, sorted_range)]
+        new_seeds = set([c for new_seed in new_seeds for c in generate_whatever(new_seed, sorted_range)])
     party_2 = min(c[0] for c in new_seeds)
 
 

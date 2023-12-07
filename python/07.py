@@ -5,32 +5,33 @@ from functools import cmp_to_key
 
 
 def card_rank(card, part_2=False):
-    count = Counter(card)
-    groups = sorted(((count[r], r) for r in count), key=lambda x: x[0], reverse=True)
-    if part_2 and count['J'] > 0:
+    groups = Counter(card)
+
+    if part_2 and groups['J'] > 0:
         if len(groups) <= 2:
             return 'five'
         if len(groups) == 4:
-                return 'three'
-        if count['J'] >= 3:
-                return 'four'
+            return 'three'
+        if groups['J'] >= 3:
+            return 'four'
         elif len(groups) == 3:
-                if all(c == 2 for m, c in count.items() if m!= 'J'):
-                    return 'full house'
-                return 'four'
+            if all(c == 2 for m, c in groups.items() if m!= 'J'):
+                return 'full house'
+            return 'four'
         return 'pair'
-    # if no J in the cards return standard ranking
+
+    # pt1 or if no J in the cards return standard ranking
     if len(groups) == 1:
         return 'five'
-    if groups[0][0] == 4:
+    if 4 in groups.values():
         return 'four'
-    if groups[0][0] == 3 and groups[1][0] == 2:
+    if 3 in groups.values() and 2 in groups.values():
         return 'full house'
-    if groups[0][0] == 2 and groups[1][0] == 2:
+    if sum(c == 2 for c in groups.values()) == 2:
         return 'two pairs'
-    if len(groups) == 3 and groups[0][0] == 3:
+    if 3 in groups.values():
         return 'three'
-    if groups[0][0] == 2:
+    if max(groups.values()) == 2:
         return 'pair'
     return 'high card'
 
@@ -68,5 +69,5 @@ print_solutions(party_1, party_2)
 def test_one():
     assert party_1 == 249726565
 
-def test_one():
+def test_two():
     assert party_2 == 251135960

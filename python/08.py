@@ -1,29 +1,18 @@
 from santas_little_helpers.helpers import *
 import re
 from math import lcm
+from itertools import cycle
 
 input_data = read_input(8)
 instructions = [c for c in input_data[0]]
 nodes = {(c:=re.findall(r'[A-Z]+', line))[0]: (c[1], c[2]) for line in input_data[2:]}
 
-def instruction_generator(instructions):
-    n = 0
-    while True:
-        if n < len(instructions):
-            yield instructions[n]
-        else:
-            yield instructions[0]
-            n = 0
-        n += 1
-
 
 def find_all_paths(instructions, nodes, pos='AAA', part_2 = True):
-    instr = instruction_generator(instructions)
+    instr = cycle(instructions)
     count = 0
     while True:
-        p = 0 if next(instr) == 'L' else 1
-
-        pos = nodes[pos][p]
+        pos = nodes[pos][next(instr) == 'R']
         count += 1
         if part_2:
             if pos[-1] == 'Z':

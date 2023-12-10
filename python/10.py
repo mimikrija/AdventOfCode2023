@@ -55,6 +55,9 @@ def get_path_length(came_from, start, end):
         current = came_from[current]
     return len(path)
 
+def is_angle(coord):
+    angles = 'LJF7'
+    return any(pipes[coord] == DIRECTIONS[angle] for angle in angles)
 
 def shortest_path(heightmap, start=None):
     frontier = deque([start])
@@ -75,5 +78,48 @@ def shortest_path(heightmap, start=None):
             #     frontier.append(neighbor)
             #     came_from[neighbor] = current
     print(len(came_from)//2)
+    return set(came_from)
 
-print(shortest_path(pipes, start = START))
+
+#print(shortest_path(pipes, start = START))
+
+loop = shortest_path(pipes, start = START)
+print (START in loop)
+party_2 = 0
+visited = set()
+for y, line in enumerate(input_data):
+    leftright = list()
+    for tile in loop:
+        if tile.imag == y and tile not in visited:
+            leftright.append(tile.real)
+            visited.add(tile)
+
+    leftright = deque(sorted(leftright))
+    #print(f'{y}: {leftright}')
+    last = leftright.popleft()
+    groups = [[last]]
+    while leftright:
+        current = leftright.popleft()
+        if last+1 == current:
+            groups[-1].append(current)
+        else:
+            groups.append([current])
+        last = current
+    area = 0
+    l = 0
+    for g1, g2 in zip(groups, groups[1:]):
+        l += len(g1)
+        l -= sum(is_angle(complex(x, y)) for x in g1)
+        print(l)
+        if l%2== 1:
+            area += g2[0] - g1[-1] -1
+    if area:
+        print(y, area)
+    party_2 += area
+ 
+
+
+
+    #party_2 += sum(right-left-1 for left, right in zip(leftright[::2], leftright[1::2]))
+
+print(party_2)

@@ -2,9 +2,9 @@ from santas_little_helpers.helpers import *
 from itertools import combinations
 
 
-def get_rows_columns(coords):
-    rows, columns = (sorted({c[p] for c in coords}) for p in (0,1))
-    return rows, columns
+def get_columns_rows(coords):
+    columns, rows = (sorted({c[p] for c in coords}) for p in (0,1))
+    return columns, rows
 
 def expand(rowcol, factor=2):
     rc = {r: r for r in rowcol}
@@ -15,9 +15,9 @@ def expand(rowcol, factor=2):
     return rc
 
 def expand_universe(galaxies, factor):
-    rows, columns = get_rows_columns(galaxies)
-    exrows, excolumns = (expand(rc, factor) for rc in (rows, columns))
-    return {(exrows[x], excolumns[y]) for x, y in galaxies}
+    columns, rows = get_columns_rows(galaxies)
+    excolumns, exrows = (expand(rc, factor) for rc in (columns, rows))
+    return {(excolumns[x], exrows[y]) for x, y in galaxies}
 
 
 input_data = read_input(11)

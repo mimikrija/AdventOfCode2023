@@ -20,17 +20,6 @@ DIRECTIONS = {
     'F': (SOUTH, EAST),
 }
 
-pipes = {}
-
-for y, line in enumerate(input_data):
-    for x, c in enumerate(line):
-        if c != '.' and c != 'S':
-            pipes[complex(x, y)] = DIRECTIONS[c]
-        elif c == 'S':
-            START = complex(x, y)
-            pipes[START] = (WEST, SOUTH) # this is manual depending on the example
-
-
 
 MATCHES = {
     NORTH: SOUTH,
@@ -38,7 +27,6 @@ MATCHES = {
     EAST: WEST,
     WEST: EAST,
 }
-
 
 
 def get_neighbors(location, pipemap):
@@ -56,6 +44,17 @@ def get_loop(pipemap, start=None):
                 frontier.append(neighbor)
                 visited.add(neighbor)
     return visited
+
+
+pipes = {}
+
+for y, line in enumerate(input_data):
+    for x, c in enumerate(line):
+        if c != '.' and c != 'S':
+            pipes[complex(x, y)] = DIRECTIONS[c]
+        elif c == 'S':
+            START = complex(x, y)
+            pipes[START] = (WEST, SOUTH) # this is manual depending on the example
 
 
 loop = get_loop(pipes, start = START)

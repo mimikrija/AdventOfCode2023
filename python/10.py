@@ -1,9 +1,10 @@
 from santas_little_helpers.helpers import *
 from collections import deque
+import re
 
 
 input_data = read_input(10)
-input_data = get_input('inputs/09e.txt')
+
 
 NORTH = 0-1j
 SOUTH = 0+1j
@@ -66,8 +67,6 @@ def shortest_path(heightmap, start=None):
         current = frontier.popleft()
 
         if current == start and len(came_from) >1 : # full loop
-                print(came_from)
-                print('hello')
                 return get_path_length(came_from, start, start)
 
         for neighbor in get_neighbors(current, heightmap):
@@ -77,49 +76,46 @@ def shortest_path(heightmap, start=None):
             # if neighbor == START:
             #     frontier.append(neighbor)
             #     came_from[neighbor] = current
-    print(len(came_from)//2)
+    print(len(came_from)//2) #party_1
     return set(came_from)
 
 
 #print(shortest_path(pipes, start = START))
 
 loop = shortest_path(pipes, start = START)
-print (START in loop)
-party_2 = 0
-visited = set()
+
+clean_map = [[c for c in line] for line in input_data]
 for y, line in enumerate(input_data):
-    leftright = list()
-    for tile in loop:
-        if tile.imag == y and tile not in visited:
-            leftright.append(tile.real)
-            visited.add(tile)
-
-    leftright = deque(sorted(leftright))
-    #print(f'{y}: {leftright}')
-    last = leftright.popleft()
-    groups = [[last]]
-    while leftright:
-        current = leftright.popleft()
-        if last+1 == current:
-            groups[-1].append(current)
-        else:
-            groups.append([current])
-        last = current
-    area = 0
-    l = 0
-    for g1, g2 in zip(groups, groups[1:]):
-        l += len(g1)
-        l -= sum(is_angle(complex(x, y)) for x in g1)
-        print(l)
-        if l%2== 1:
-            area += g2[0] - g1[-1] -1
-    if area:
-        print(y, area)
-    party_2 += area
- 
+    for x, c in enumerate(line):
+        if complex(x, y) not in loop:
+            clean_map[y][x] = '.'
+        if c =='S':
+            clean_map[y][x] = '7' # this is manual depending on the example
+party_2 = 0
+for n, line in enumerate(clean_map):
+    
+    cline = ''.join(c for c in line)
+    matches = re.finditer(r'L-*J|L-*7|F-*J|F-*7|\|', cline)
+    areas = re.finditer(r'\.+', cline)
+    spans_to_check = []
+    for a in areas:
+        spans_to_check.append(a.span())
 
 
+    out = True
+    last_right = -1
+    for match in matches:
+        conf = match.group()
+        left, right = match.span()
+        diff = left - last_right - 1
+        
 
-    #party_2 += sum(right-left-1 for left, right in zip(leftright[::2], leftright[1::2]))
+        if not out:
+            #print(f'line number {n}, {left}, {last_right}')
+            party_2 += diff
+        last_right = right-1
+        if not(('L' in conf and 'J' in conf) or ('F' in conf and '7' in conf)):
+            out = not out
+
 
 print(party_2)

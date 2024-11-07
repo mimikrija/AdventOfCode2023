@@ -8,10 +8,20 @@ round_rocks = {complex(x,y) for y, row in enumerate(input_data, start=1) for x, 
 available = {complex(x,y) for y, row in enumerate(input_data, start=1) for x, symbol in enumerate(row, start=1) if symbol != '#'}
 
 SOUTH_BORDER = max(point.imag for point in available) + 1
-print(SOUTH_BORDER)
+EAST_BORDER = max(point.real for point in available) + 1
+
 
 def is_north_border(point):
     return point.imag == 0
+
+def is_south_border(point):
+    return point.imag == SOUTH_BORDER
+
+def is_west_border(point):
+    return point.real == 0
+
+def is_east_border(point):
+    return point.real == EAST_BORDER
 
 def distance_from_south_border(point):
     return SOUTH_BORDER - point.imag
@@ -23,9 +33,16 @@ DIRECTIONS = {
     'east:': 1+0j,
 }
 
+border_condition = {
+    'north': is_north_border,
+    'south': is_south_border,
+    'west':  is_west_border,
+    'east:': is_east_border,
+}
+
 def roll_the_rock(rock, direction='north'):
     while True:
-        if is_north_border((next_position := rock + DIRECTIONS[direction])) or next_position in rocks:
+        if border_condition[direction]((next_position := rock + DIRECTIONS[direction])) or next_position in rocks:
             return rock
         rock = next_position
 

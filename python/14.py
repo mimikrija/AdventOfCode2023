@@ -30,14 +30,14 @@ DIRECTIONS = {
     'north': 0-1j,
     'south': 0+1j,
     'west': -1+0j,
-    'east:': 1+0j,
+    'east': 1+0j,
 }
 
 border_condition = {
     'north': is_north_border,
     'south': is_south_border,
     'west':  is_west_border,
-    'east:': is_east_border,
+    'east': is_east_border,
 }
 
 def roll_the_rock(rock, direction='north'):

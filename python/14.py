@@ -52,7 +52,6 @@ def calculate_force(rocks):
     for rock in round_rocks:
         rock_position_counter[roll_the_rock(rock)] += 1
     for position, amount in rock_position_counter.items():
-        print(position, amount)
         exact_positions = (complex(position.real, (position.imag+d)) for d in range(amount))
         total_force += sum(distance_from_south_border(position) for position in exact_positions)
     return int(total_force)

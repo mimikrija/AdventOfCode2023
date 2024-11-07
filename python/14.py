@@ -58,7 +58,7 @@ def calculate_force(rocks):
     return int(total_force)
 
 
-party_1 = calculate_force(rocks)
+party_1 = calculate_force(round_rocks)
 print_solutions(party_1)
 
 def test_one():

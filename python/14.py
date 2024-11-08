@@ -46,19 +46,56 @@ def roll_the_rock(rock, direction='north'):
             return rock
         rock = next_position
 
-def calculate_force(rocks):
-    total_force = 0
+def position_the_rocks_correctly(round_rocks, direction='north'):
+    exact_positions = []
     rock_position_counter = defaultdict(int)
     for rock in round_rocks:
-        rock_position_counter[roll_the_rock(rock)] += 1
+        rock_position_counter[roll_the_rock(rock, direction)] += 1
     for position, amount in rock_position_counter.items():
-        exact_positions = (complex(position.real, (position.imag+d)) for d in range(amount))
-        total_force += sum(distance_from_south_border(position) for position in exact_positions)
+        exact_positions += [position - d*DIRECTIONS[direction] for d in range(amount)]
+    return exact_positions
+
+def calculate_force(exact_positions):
+    total_force = sum(distance_from_south_border(position) for position in exact_positions)
     return int(total_force)
 
+def one_cycle(rounded_rock_positions):
+    for direction in ['north', 'west', 'south', 'east']:
+        rounded_rock_positions = position_the_rocks_correctly(rounded_rock_positions, direction)
+    return rounded_rock_positions
 
-party_1 = calculate_force(round_rocks)
-print_solutions(party_1)
+
+def a_lot_of_cycles(round_rocks, a_lot=1000000000):
+    pattern = defaultdict(list)
+    rounded_rocks_after_centrifuge = frozenset(round_rocks)
+    cycle = 1
+    while True:
+        if pattern and any(len(cycles) > 1 for cycles in pattern.values()):
+            more_than_one = [cycle for cycles in pattern.values() for cycle in cycles if len(cycles) == 2]
+            first_repeating, next_repeating = more_than_one
+            period = next_repeating - first_repeating
+            solution_cycle = first_repeating + (a_lot - first_repeating)%period
+            break
+
+        rounded_rocks_after_centrifuge = frozenset(one_cycle(rounded_rocks_after_centrifuge))
+        pattern[rounded_rocks_after_centrifuge].append(cycle)
+        cycle += 1
+        
+    for rocks, cycles in pattern.items():
+        if solution_cycle in cycles:
+            return calculate_force(rocks)
+
+
+round_rocks_north = position_the_rocks_correctly(round_rocks, 'north')
+party_1 = calculate_force(round_rocks_north)
+party_2 = a_lot_of_cycles(round_rocks)
+
+
+print_solutions(party_1, party_2)
+
 
 def test_one():
     assert party_1 == 108792
+
+def test_two():
+    assert party_2 == 99118

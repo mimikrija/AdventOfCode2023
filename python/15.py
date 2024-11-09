@@ -52,8 +52,11 @@ for box, lenses in boxes.items():
 
 
 party_2 = sum(focusing_power(*bla) for bla in lenses_result.values())
-print_solutions(party_1, party_2) # 258670 too hight # 52301 too low
+print_solutions(party_1, party_2)
 
 
 def test_one():
     assert party_1 == 509784
+
+def test_two():
+    assert party_2 == 230197

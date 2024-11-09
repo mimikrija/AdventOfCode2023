@@ -48,7 +48,7 @@ DIRECTIONS = {
 GETDIRECTION = {v: k for k, v in DIRECTIONS.items()}
 
 def draw_laser_beams(mirror_map, start, start_direction):
-    energized_fields = [(start, start_direction)]
+    energized_fields = []
     to_solve = deque([(start, DIRECTIONS[start_direction])])
     count = 0
     while to_solve:
@@ -66,10 +66,37 @@ def draw_laser_beams(mirror_map, start, start_direction):
 
     return energized_fields
 
+def find_best(mirror_map):
+    best_result = 0
+    max_column = max(mirror_map.keys(), key=lambda x: x.real)
+    max_row = max(mirror_map.keys(), key=lambda x: x.imag)
+    left_columns = (c - 1 for c in mirror_map.keys() if c.real == 1)
+    right_columns = (c + 1 for c in mirror_map.keys() if c.real == max_column)
+    top_rows = (c - 1j for c in mirror_map.keys() if c.imag == 1)
+    bottom_rows = (c + 1j for c in mirror_map.keys() if c.imag == max_row)
 
-party_1 = len(set((c[0] for c in draw_laser_beams(mirror_map, 1+1j, 'down'))))
+    for start_position in left_columns:
+        best_result = max(best_result, len(set((c[0] for c in draw_laser_beams(mirror_map, start_position, 'right')))))
 
-print_solutions(party_1)
+    for start_position in right_columns:
+        best_result = max(best_result, len(set((c[0] for c in draw_laser_beams(mirror_map, start_position, 'left')))))
+
+    for start_position in top_rows:
+        best_result = max(best_result, len(set((c[0] for c in draw_laser_beams(mirror_map, start_position, 'down')))))
+
+    for start_position in bottom_rows:
+        best_result = max(best_result, len(set((c[0] for c in draw_laser_beams(mirror_map, start_position, 'up')))))
+
+    return best_result
+
+party_1 = len(set((c[0] for c in draw_laser_beams(mirror_map, 0+1j, 'right'))))
+
+party_2 = find_best(mirror_map)
+
+print_solutions(party_1, party_2)
 
 def test_one():
     assert party_1 == 7860
+
+def test_two():
+    assert party_1 == 8331

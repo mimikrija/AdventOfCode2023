@@ -5,7 +5,9 @@ from collections import deque
 input_data = read_input(16)
 
 
-mirror_map = {complex(x,y): symbol for y, row in enumerate(input_data, start=1) for x, symbol in enumerate(row, start=1)}
+mirror_map = {complex(x,y): symbol 
+              for y, row in enumerate(input_data, start=1)
+              for x, symbol in enumerate(row, start=1)}
 
 is_horizontal = lambda x:  DIRECTIONS['left'] == x or DIRECTIONS['right'] == x
 is_vertical = lambda x:  DIRECTIONS['up'] == x or DIRECTIONS['down'] == x
@@ -45,26 +47,23 @@ DIRECTIONS = {
     'right': 1+0j,
 }
 
-GETDIRECTION = {v: k for k, v in DIRECTIONS.items()}
 
 def draw_laser_beams(mirror_map, start, start_direction):
-    energized_fields = []
+    energized_fields = set()
     to_solve = deque([(start, DIRECTIONS[start_direction])])
-    count = 0
     while to_solve:
-        count += 1
         current, direction = to_solve.popleft()
         current += direction
         if current not in mirror_map or (current, direction) in energized_fields:
             continue
         else:
-            energized_fields.append((current, direction))
+            energized_fields.add((current, direction))
             type = mirror_map[current]
-            direction = reflected(direction, type)
-            for d in direction:
+            directions = reflected(direction, type)
+            for d in directions:
                 to_solve.append((current, d))
 
-    return energized_fields
+    return len(set(c[0] for c in energized_fields))
 
 def find_best(mirror_map):
     best_result = 0
@@ -76,20 +75,20 @@ def find_best(mirror_map):
     bottom_rows = (c + 1j for c in mirror_map.keys() if c.imag == max_row)
 
     for start_position in left_columns:
-        best_result = max(best_result, len(set((c[0] for c in draw_laser_beams(mirror_map, start_position, 'right')))))
+        best_result = max(best_result, draw_laser_beams(mirror_map, start_position, 'right'))
 
     for start_position in right_columns:
-        best_result = max(best_result, len(set((c[0] for c in draw_laser_beams(mirror_map, start_position, 'left')))))
+        best_result = max(best_result, draw_laser_beams(mirror_map, start_position, 'left'))
 
     for start_position in top_rows:
-        best_result = max(best_result, len(set((c[0] for c in draw_laser_beams(mirror_map, start_position, 'down')))))
+        best_result = max(best_result, draw_laser_beams(mirror_map, start_position, 'down'))
 
     for start_position in bottom_rows:
-        best_result = max(best_result, len(set((c[0] for c in draw_laser_beams(mirror_map, start_position, 'up')))))
+        best_result = max(best_result, draw_laser_beams(mirror_map, start_position, 'up'))
 
     return best_result
 
-party_1 = len(set((c[0] for c in draw_laser_beams(mirror_map, 0+1j, 'right'))))
+party_1 = draw_laser_beams(mirror_map, 0+1j, 'right')
 
 party_2 = find_best(mirror_map)
 

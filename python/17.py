@@ -54,38 +54,46 @@ nice_directions = {
 
 
 
-def least_heat(start=1+1j, end=complex(MAX_COLUMN, MAX_ROW)):
+def least_heat(start=0+1j, end=complex(MAX_COLUMN, MAX_ROW)):
     frontier = PriorityQueue()
     
-    frontier.put(PrioritizedItem(0, [DIRECTIONS['down']]))
     frontier.put(PrioritizedItem(0, [DIRECTIONS['right']]))
+    #frontier.put(PrioritizedItem(0, []))
     heat_so_far = dict()
     heat_so_far[start] = 0
     result = inf
 
     while not frontier.empty():
         item = frontier.get()
-        current_heat = item.priority
+        last_heat_score = item.priority
         directions_so_far = item.item
-        current_position = start + sum(directions_so_far)
-        if len(directions_so_far)>=4 and len(set(directions_so_far[-4:])) == 1:
-            continue
-        if current_position not in heat_map:
-            continue
-        new_heat = current_heat + heat_map[current_position]
-        if current_position not in heat_so_far or heat_so_far[current_position] > new_heat:
-            heat_so_far[current_position] = new_heat
-        if current_position == end:
-            result = min(new_heat, result)
-            print(result, ''.join(nice_directions[c] for c in directions_so_far))
-            return
+        if directions_so_far:
+            last_direction = directions_so_far[-1]
+            last_position = start + sum(directions_so_far)
+        else:
+            last_position = start
+            last_direction = None
+        for dir in DIRECTIONS.values():
+            if last_direction is None or (dir != - last_direction and dir != last_direction):
+                current_positions = {n: last_position + n*dir for n in range(3, 0, -1)}
+                for count, current_position in current_positions.items():
+                    if current_position in heat_map:
+                        new_heat_score = last_heat_score + sum(heat_map[current_positions[m]] for m in range(1, count + 1))
+                        if current_position not in heat_so_far or heat_so_far[current_position] > new_heat_score:
+                            heat_so_far[current_position] = new_heat_score
+                            frontier.put(PrioritizedItem(new_heat_score, directions_so_far + count*[dir]))
 
-        for d in DIRECTIONS.values():
-            frontier.put(PrioritizedItem(new_heat, directions_so_far + [d]))
+        if last_position == end:
+            result = heat_so_far[last_position]
+            print(result, ''.join(nice_directions[c] for c in directions_so_far))
+            return result
+
 
 
 
 # 913 too high
+# 911 too high
+# 902
 
 party_1 = least_heat()
 print_solutions(party_1)

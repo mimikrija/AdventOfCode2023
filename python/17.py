@@ -78,9 +78,9 @@ def least_heat(start=0+1j, end=complex(MAX_COLUMN, MAX_ROW)):
             last_direction = None
         for dir in DIRECTIONS.values():
             if last_direction == None or (dir != - last_direction and dir != last_direction):
-                current_positions = {n: last_position + n*dir for n in range(3, 0, -1)}
+                current_positions = {n: last_position + n*dir for n in range(10, 0, -1)}
                 for count, current_position in current_positions.items():
-                    if current_position in heat_map:
+                    if current_position in heat_map and count >= 4:
                         new_heat_score = last_heat_score + sum(heat_map[current_positions[m]] for m in range(1, count + 1))
                         bla = (current_position, dir)
                         if bla not in heat_so_far or heat_so_far[bla] > new_heat_score:
@@ -97,7 +97,11 @@ def least_heat(start=0+1j, end=complex(MAX_COLUMN, MAX_ROW)):
 
 
 party_1 = least_heat()
+party_1 = least_heat()
 print_solutions(party_1)
 
 def test_one():
     assert party_1 == 866
+
+def test_two():
+    assert party_2 == 1010

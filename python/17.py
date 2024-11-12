@@ -1,6 +1,7 @@
 from santas_little_helpers.helpers import *
 from math import inf
 from queue import PriorityQueue
+from collections import defaultdict
 
 from dataclasses import dataclass, field
 from typing import Any
@@ -57,10 +58,12 @@ nice_directions = {
 def least_heat(start=0+1j, end=complex(MAX_COLUMN, MAX_ROW)):
     frontier = PriorityQueue()
     
+    #frontier.put(PrioritizedItem(0, [DIRECTIONS['down']]))
     frontier.put(PrioritizedItem(0, [DIRECTIONS['right']]))
     #frontier.put(PrioritizedItem(0, []))
-    heat_so_far = dict()
-    heat_so_far[start] = 0
+    heat_so_far = defaultdict(int)
+    heat_so_far[(start, DIRECTIONS['right'])] = 0
+    #heat_so_far[(start, DIRECTIONS['right'])] = 0
     result = inf
 
     while not frontier.empty():
@@ -74,26 +77,27 @@ def least_heat(start=0+1j, end=complex(MAX_COLUMN, MAX_ROW)):
             last_position = start
             last_direction = None
         for dir in DIRECTIONS.values():
-            if last_direction is None or (dir != - last_direction and dir != last_direction):
+            if last_direction == None or (dir != - last_direction and dir != last_direction):
                 current_positions = {n: last_position + n*dir for n in range(3, 0, -1)}
                 for count, current_position in current_positions.items():
                     if current_position in heat_map:
                         new_heat_score = last_heat_score + sum(heat_map[current_positions[m]] for m in range(1, count + 1))
-                        if current_position not in heat_so_far or heat_so_far[current_position] > new_heat_score:
-                            heat_so_far[current_position] = new_heat_score
+                        bla = (current_position, dir)
+                        if bla not in heat_so_far or heat_so_far[bla] > new_heat_score:
+                            heat_so_far[bla] = new_heat_score
                             frontier.put(PrioritizedItem(new_heat_score, directions_so_far + count*[dir]))
 
         if last_position == end:
-            result = heat_so_far[last_position]
+            result = last_heat_score
+            #result = heat_so_far[last_position]
             print(result, ''.join(nice_directions[c] for c in directions_so_far))
             return result
 
 
 
 
-# 913 too high
-# 911 too high
-# 902
-
 party_1 = least_heat()
 print_solutions(party_1)
+
+def test_one():
+    assert party_1 == 866

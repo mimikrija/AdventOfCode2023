@@ -97,7 +97,7 @@ def least_heat(start=0+1j, end=complex(MAX_COLUMN, MAX_ROW)):
 
 
 party_1 = least_heat()
-party_1 = least_heat()
+party_2 = least_heat()
 print_solutions(party_1)
 
 def test_one():
